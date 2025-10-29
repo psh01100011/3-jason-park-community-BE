@@ -28,6 +28,7 @@ public class AuthController {
     public ResponseEntity<Long> login(@RequestBody AuthDto request, HttpSession session) {
         Long userId = userAuthService.login(request.getEmail(), request.getPassword());
         session.setAttribute("userId", userId);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(userId);
     }
 

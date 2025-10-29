@@ -6,6 +6,7 @@ import com.ktb.community_BE.service.PostService;
 import com.ktb.community_BE.service.UserAuthService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,7 +39,7 @@ public class CommentController {
         commentRequest.setUserId(userId);
         CommentDto response= commentService.createComment(commentRequest);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     // 댓글 수정
