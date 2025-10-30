@@ -18,16 +18,14 @@ public class PostLikeController {
 
     // 좋아요 추가
     @PostMapping
-    public ResponseEntity<String> likePost(@PathVariable Long postId, HttpSession session) {
-        Long userId = userAuthService.getSessionId(session);
+    public ResponseEntity<String> likePost(@PathVariable Long postId,@RequestAttribute("userId") Long userId) {
         postLikeService.likePost(postId, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body("liked");
     }
 
     // 좋아요 취소
     @DeleteMapping
-    public ResponseEntity<String> unlikePost(@PathVariable Long postId, HttpSession session) {
-        Long userId = userAuthService.getSessionId(session);
+    public ResponseEntity<String> unlikePost(@PathVariable Long postId,@RequestAttribute("userId") Long userId) {
         postLikeService.unlikePost(postId, userId);
         return ResponseEntity.ok("unliked");
     }

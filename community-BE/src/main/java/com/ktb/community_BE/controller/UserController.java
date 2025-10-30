@@ -52,23 +52,20 @@ public class UserController {
 
     // 내 프로필 수정(닉네임, 프로필 사진)
     @PatchMapping("/me")
-    public ResponseEntity<Void> updateProfile(@RequestBody UserDto userRequest, HttpSession session){
-        Long userId = userAuthService.getSessionId(session);
+    public ResponseEntity<Void> updateProfile(@RequestBody UserDto userRequest, @RequestAttribute("userId") Long userId){
         userService.updateInfo(userId,userRequest);
         return ResponseEntity.noContent().build();
     }
     // 내 비밀번호 수정
     @PatchMapping("/me/auth")
-    public ResponseEntity<Void> updatePassword(@RequestBody UserDto userRequest, HttpSession session){
-        Long userId = userAuthService.getSessionId(session);
+    public ResponseEntity<Void> updatePassword(@RequestBody UserDto userRequest,@RequestAttribute("userId") Long userId){
         userService.updateAuth(userId,userRequest);
         return ResponseEntity.noContent().build();
     }
 
     // 회원 탈퇴 : 내 정보의 상태만 변경 (활성화 -> 탈퇴)
     @PatchMapping("/me/status")
-    public ResponseEntity<Void> withdrawUser(HttpSession session){
-        Long userId = userAuthService.getSessionId(session);
+    public ResponseEntity<Void> withdrawUser(@RequestAttribute("userId") Long userId){
         userService.withdrawUser(userId);
         return ResponseEntity.noContent().build();
     }

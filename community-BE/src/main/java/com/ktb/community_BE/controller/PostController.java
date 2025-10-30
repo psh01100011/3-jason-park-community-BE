@@ -34,8 +34,7 @@ public class PostController {
 
     // 게시물 등록
     @PostMapping
-    public ResponseEntity<PostDto> createPost(@RequestBody PostDto postRequest, HttpSession session) {
-        Long userId = userAuthService.getSessionId(session);
+    public ResponseEntity<PostDto> createPost(@RequestBody PostDto postRequest, @RequestAttribute("userId") Long userId) {
         postRequest.setUserId(userId);
         PostDto response = postService.createPost(postRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -50,8 +49,7 @@ public class PostController {
 
     // 게시물 수정
     @PatchMapping("/{postId}")
-    public ResponseEntity<PostDto> updatePost(@PathVariable Long postId, @RequestBody PostDto postRequest,HttpSession session){
-        Long userId = userAuthService.getSessionId(session);
+    public ResponseEntity<PostDto> updatePost(@PathVariable Long postId, @RequestBody PostDto postRequest,@RequestAttribute("userId") Long userId){
         //권한 검사 구현 필요
 
         postRequest.setUserId(userId);
@@ -62,22 +60,16 @@ public class PostController {
 
     // 게시물 소프트 삭제 : 게시물 상태 변경(삭제)
     @PatchMapping("/{postId}/status")
-    public ResponseEntity<Void> deletePost(@PathVariable Long postId, HttpSession session){
-        Long userId = userAuthService.getSessionId(session);
-        //권한 검사는 service에 구현? or controller에 구현? -> 조사하기
-
-
-        postService.updatePostStatus(postId);
+    public ResponseEntity<Void> deletePost(@PathVariable Long postId, @RequestAttribute("userId") Long userId){
+        //권한 검사는 service에 구현? or controller에 구현? -> 조사하기 <- 확실하진 않은데 정상적인 형식의 값 검증은 컨트롤러가 해도 되는데 앵간한건 서비스가? // 그래서 서비스에 함
+        postService.updatePostStatus(postId, userId);
         return ResponseEntity.noContent().build();
     }
 
     // 게시물 삭제 :
     @DeleteMapping("/{postId}")
-    public ResponseEntity<Void> deletePostPermently(@PathVariable Long postId, HttpSession session){
-        Long userId = userAuthService.getSessionId(session);
+    public ResponseEntity<Void> deletePostPermently(@PathVariable Long postId, @RequestAttribute("userId") Long userId){
         //권한 검사는 service에 구현? or controller에 구현? -> 조사하기
-
-
         postService.deletePost(postId);
         return ResponseEntity.noContent().build();
     }

@@ -33,8 +33,7 @@ public class CommentController {
 
     // 댓글 작성
     @PostMapping
-    public ResponseEntity<CommentDto> createComment(@PathVariable Long postId,@RequestBody CommentDto commentRequest, HttpSession session){
-        Long userId = userAuthService.getSessionId(session);
+    public ResponseEntity<CommentDto> createComment(@PathVariable Long postId,@RequestBody CommentDto commentRequest, @RequestAttribute("userId") Long userId){
         commentRequest.setPostId(postId);
         commentRequest.setUserId(userId);
         CommentDto response= commentService.createComment(commentRequest);
@@ -44,8 +43,7 @@ public class CommentController {
 
     // 댓글 수정
     @PatchMapping("/{commentId}")
-    public ResponseEntity<CommentDto> updateComment(@PathVariable Long postId, @PathVariable Long commentId, @RequestBody CommentDto commentRequest,HttpSession session){
-        Long userId = userAuthService.getSessionId(session);
+    public ResponseEntity<CommentDto> updateComment(@PathVariable Long postId, @PathVariable Long commentId, @RequestBody CommentDto commentRequest,@RequestAttribute("userId") Long userId){
         commentRequest.setPostId(postId);
         commentRequest.setUserId(userId);
         commentRequest.setId(commentId);
@@ -58,11 +56,9 @@ public class CommentController {
 
     // 댓글 삭제
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<Void> deleteComment(@PathVariable Long postId, @PathVariable Long commentId, HttpSession session){
-        Long userId = userAuthService.getSessionId(session);
+    public ResponseEntity<Void> deleteComment(@PathVariable Long postId, @PathVariable Long commentId, @RequestAttribute("userId") Long userId){
         //권한 검사는 service에 구현? or controller에 구현? -> 조사하기
-
-        commentService.deleteComment(commentId,postId);
+        commentService.deleteComment(commentId,postId, userId);
         return ResponseEntity.noContent().build();
     }
 

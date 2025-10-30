@@ -77,6 +77,9 @@ public class PostService {
     @Transactional
     public PostDto updatePost(PostDto postRequest){
         Post post = postRepository.findById(postRequest.getId()).orElseThrow(() -> new IllegalArgumentException("Post not found"));
+        if(post.getUser().getId() != postRequest.getUserId()){
+            throw new IllegalArgumentException("비정상적인 접근입니다.");
+        }
         PostContent postContent = postContentRepository.findById(postRequest.getId()).orElseThrow(() -> new IllegalArgumentException("Post not found"));
 
         if (postRequest.getTitle() != null){
@@ -99,8 +102,11 @@ public class PostService {
 
     //게시물 소프트 삭제
     @Transactional
-    public void updatePostStatus(Long id){
+    public void updatePostStatus(Long id, Long userId){
         Post post = postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Post not found"));
+        if(post.getUser().getId() != userId){
+            throw new IllegalArgumentException("비정상적인 접근입니다.");
+        }
         post.setPostStatusDeleted();
         post.setDeletedAt(LocalDateTime.now());
     }
