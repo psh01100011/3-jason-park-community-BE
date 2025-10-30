@@ -14,12 +14,6 @@ import java.util.Arrays;
 
 @Component
 public class SessionAuthFilter extends OncePerRequestFilter {
-
-    //필터 필요 경로 설정 : 난 대부분 그냥 접근 가능
-    private static final String[] EXCLUDED_METHODS = {
-        "GET","POST", "OPTIONS"
-    };
-
     //필터 제외 경로 목록
     private static final String[] EXCLUDED_PATHS_AFTER_METHODS_GET = {
             "/api/v1/posts/list"
@@ -47,7 +41,6 @@ public class SessionAuthFilter extends OncePerRequestFilter {
                 return true;
             }
         }
-
         System.out.println(path +" 검증함");
         return false;
 
@@ -59,7 +52,7 @@ public class SessionAuthFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain chain
     ) throws IOException, ServletException {
-        //로그인 일때 세션 확인-> 세션 없어도 통과, 있다면?
+        //세션 가져오기 : 없을 때 생성하지 않도록 false 처리
         HttpSession session = request.getSession(false);
 
         if(session != null){
