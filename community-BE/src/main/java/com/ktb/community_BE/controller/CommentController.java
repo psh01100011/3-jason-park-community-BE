@@ -67,7 +67,7 @@ public class CommentController {
     }
 
     // 댓글 리스트 조회
-    @GetMapping
+    @GetMapping("/list")
     public List<CommentDto> getPostList(@PathVariable Long postId) {
         return commentService.getCommentList(postId);
     }

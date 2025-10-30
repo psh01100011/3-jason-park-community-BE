@@ -83,7 +83,7 @@ public class PostController {
     }
 
     //게시물 목록 조회 : 무한 스크롤
-    @GetMapping
+    @GetMapping("/list")
     public ResponseEntity<List<PostDto>> getPostList(@RequestParam(value = "lastPostId", required = false) Long lastPostId, @RequestParam(value = "limit", defaultValue = "10") int limit) {
         List<PostDto> response = postService.getPostList(lastPostId, limit);
         return ResponseEntity.ok(response);

@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -44,8 +45,7 @@ public class UserController {
 
     //내 정보 가져오기 : 세션Id 사용
     @GetMapping("/me")
-    public ResponseEntity<UserDto> getUserInfo(HttpSession session) {
-        Long userId = userAuthService.getSessionId(session);
+    public ResponseEntity<Object> getUserInfo(@RequestAttribute("userId") Long userId) {
         UserDto response = userService.getMyInfo(userId);
         return ResponseEntity.ok(response);
     }
