@@ -52,6 +52,7 @@ public class PostService {
     }
 
     //게시물 상세조회
+    @Transactional
     public PostDto getPostDetail(Long id){
         Post post = postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Post not found"));
 
