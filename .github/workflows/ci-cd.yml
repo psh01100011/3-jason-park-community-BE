@@ -34,5 +34,5 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build --platform linux/amd64 -t ${{ secrets.REGISTRY_HOST }}/community-was:latest -f .community-BE/Dockerfile .
+          docker build --platform linux/amd64 -t ${{ secrets.REGISTRY_HOST }}/community-was:latest -f ./community-BE/Dockerfile .
           docker push ${{ secrets.REGISTRY_HOST }}/community-was:latest
