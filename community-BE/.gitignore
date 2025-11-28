@@ -6,6 +6,8 @@ build/
 !**/src/test/**/build/
 src/main/generated/
 
+application.yml
+
 ### STS ###
 .apt_generated
 .classpath
