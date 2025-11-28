@@ -14,3 +14,25 @@ jobs:
     continue-on-error: true
     steps:
       - run: echo "Tests skipped" # 일단 스킵..
+
+  build-and-push-image:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Create application.yml
+        run: |
+          echo "${{ secrets.APPLICATION_YML_CONFIG }}" > ./community-BE/src/main/resources/application.yml
+          cat ./community-BE/src/main/resources/application.yml
+
+      - name: Private Registry Login
+        run: |
+          docker login ${{ secrets.REGISTRY_HOST }} -u "${{ secrets.REGISTRY_USERNAME }}" -p "${{ secrets.REGISTRY_PASSWORD }}"
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build --platform linux/amd64 -t ${{ secrets.REGISTRY_HOST }}/community-ws:latest .
+          docker push ${{ secrets.REGISTRY_HOST }}/community-ws:latest
