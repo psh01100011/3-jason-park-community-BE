@@ -37,3 +37,80 @@ jobs:
           cd community-BE
           docker build --platform linux/amd64 -t ${{ secrets.REGISTRY_HOST }}/community-was:latest .
           docker push ${{ secrets.REGISTRY_HOST }}/community-was:latest
+
+  deploy:
+    needs: build-and-push-image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Prepare SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+      - name: Check if Docker is installed
+        id: check-docker
+        run: |
+          DOCKER_EXISTS=$(ssh -i ~/.ssh/id_rsa \
+            -o ProxyJump=${{ secrets.BASTION_USER }}@${{ secrets.BASTION_HOST }} \
+            -o StrictHostKeyChecking=no \
+            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
+            'command -v docker >/dev/null && echo "true" || echo "false"')
+
+          echo "docker_exists=$DOCKER_EXISTS" >> $GITHUB_OUTPUT
+
+      - name: Check if Java is installed
+        id: check-java
+        run: |
+          JAVA_EXISTS=$(ssh -i ~/.ssh/id_rsa \
+            -o ProxyJump=${{ secrets.BASTION_USER }}@${{ secrets.BASTION_HOST }} \
+            -o StrictHostKeyChecking=no \
+            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
+            'command -v java >/dev/null && echo "true" || echo "false"')
+          echo "java_exists=$JAVA_EXISTS" >> $GITHUB_OUTPUT
+
+      - name: Install Docker on EC2
+        if: steps.check-docker.outputs.docker_exists == 'false'
+        run: |
+          ssh -i ~/.ssh/id_rsa -o ProxyJump=${{ secrets.BASTION_USER }}@${{ secrets.BASTION_HOST }} -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+            sudo apt-get update
+            sudo apt-get install -y \
+              ca-certificates \
+              curl \
+              gnupg \
+              lsb-release
+            sudo mkdir -p /etc/apt/keyrings
+            curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+              | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+            echo \
+              "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+              https://download.docker.com/linux/ubuntu \
+              $(lsb_release -cs) stable" \
+              | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+            sudo apt-get update
+            sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+            sudo usermod -aG docker $USER
+          EOF
+          
+      - name: Install Java on EC2
+        if: steps.check-java.outputs.java_exists == 'false'
+        run: |
+          ssh -i ~/.ssh/id_rsa -o ProxyJump=${{ secrets.BASTION_USER }}@${{ secrets.BASTION_HOST }} -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+              sudo apt update
+              sudo apt install -y openjdk-21-jdk
+            EOF
+          
+      - name: Private Registry Login
+        run: |
+          ssh -i ~/.ssh/id_rsa -o ProxyJump=${{ secrets.BASTION_USER }}@${{ secrets.BASTION_HOST }} -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+            docker login ${{ secrets.REGISTRY_HOST }} -u "${{ secrets.REGISTRY_USERNAME }}" -p "${{ secrets.REGISTRY_PASSWORD }}"
+          EOF
+
+      - name: Deploy to EC2 via Docker Compose
+        run: |
+          ssh -i ~/.ssh/id_rsa -o ProxyJump=${{ secrets.BASTION_USER }}@${{ secrets.BASTION_HOST }} -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+            cd /home/${{ secrets.SERVER_USER }}/backend
+            docker compose pull
+            docker compose up -d
+          EOF
