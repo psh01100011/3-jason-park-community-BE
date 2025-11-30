@@ -22,9 +22,7 @@ jobs:
           java-version: '21'
 
       - name: Grant execute permission for gradlew
-        run: |
-          cd community-BE
-          chmod +x gradlew
+        run: chmod +x gradlew
 
       - name: Run Tests
         run: ./gradlew test
