@@ -16,6 +16,7 @@ build/
 community-BE/src/main/generated/
 
 application.yml
+application_deploy.yml
 
 ### STS ###
 .apt_generated
