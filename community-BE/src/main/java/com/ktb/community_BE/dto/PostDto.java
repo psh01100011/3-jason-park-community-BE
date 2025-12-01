@@ -14,6 +14,7 @@ public class PostDto {
     private Long id;
     private Long userId;
     private String nickname;
+    private String profileImage;
     private String title;
     private String content;
     private String image;
@@ -27,10 +28,11 @@ public class PostDto {
         this.id = id;
     }
 
-    public PostDto(Long id, Long userId, String nickname, String title, String content, String image, int viewCount, int commentCount, int likeCount, LocalDateTime createdAt, LocalDateTime updatedAt){
+    public PostDto(Long id, Long userId, String nickname, String profileImage,String title, String content, String image, int viewCount, int commentCount, int likeCount, LocalDateTime createdAt, LocalDateTime updatedAt){
         this.id = id;
         this.userId = userId;
         this.nickname = nickname;
+        this.profileImage = profileImage;
         this.title = title;
         this.content = content;
         this.image = image;

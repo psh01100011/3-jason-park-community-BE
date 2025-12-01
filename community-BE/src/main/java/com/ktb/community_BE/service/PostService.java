@@ -46,7 +46,7 @@ public class PostService {
         ));
 
         return new PostDto(post.getId(),
-                user.getId(), null, post.getTitle(),
+                user.getId(), null, null,post.getTitle(),
                 postContent.getContent(), postContent.getImage(),0,0,0,
                 LocalDateTime.now(), LocalDateTime.now());
     }
@@ -67,7 +67,7 @@ public class PostService {
 
         post.addViewCount();
         return new PostDto(
-                post.getId(), user.getId(), user.getNickname(),
+                post.getId(), user.getId(), user.getNickname(), user.getProfileImage(),
                 post.getTitle(), postContent.getContent(), postContent.getImage(),
                 post.getViewCount(),post.getCommentCount(),post.getLikeCount(),
                 post.getCreatedAt(), post.getUpdatedAt()
@@ -95,7 +95,7 @@ public class PostService {
         post.setUpdatedAt(LocalDateTime.now());
 
         return new PostDto(post.getId(),
-                post.getUser().getId(),null, post.getTitle(),
+                post.getUser().getId(),null, null,post.getTitle(),
                 postContent.getContent(), postContent.getImage(),
                 post.getViewCount(),post.getCommentCount(),post.getLikeCount(),
                 post.getCreatedAt(), post.getUpdatedAt());
@@ -143,6 +143,7 @@ public class PostService {
                             post.getId(),
                             user.getId(),
                             user.getNickname(),
+                            user.getProfileImage(),
                             post.getTitle(),
                             null,
                             null,

@@ -26,7 +26,6 @@ class PostServiceTest {
 
     @Test
     void updatePostStatus() {
-        // given
         Long postId = 1L;
         Long correctUserId = 100L;
         Long wrongUserId = 99L;
@@ -39,7 +38,6 @@ class PostServiceTest {
         Mockito.when(postRepository.findById(postId))
                 .thenReturn(Optional.of(post));
 
-        // when & then
         Assertions.assertThrows(IllegalArgumentException.class, () ->
                 postService.updatePostStatus(postId, wrongUserId)
         );
