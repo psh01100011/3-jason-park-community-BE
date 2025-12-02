@@ -14,15 +14,17 @@ public class CommentDto {
     private Long postId;
     private Long userId;
     private String nickname;
+    private String profileImage;
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public CommentDto(Long id,Long postId, Long userId, String nickname, String content, LocalDateTime createdAt, LocalDateTime updatedAt){
+    public CommentDto(Long id,Long postId, Long userId, String nickname, String profileImage, String content, LocalDateTime createdAt, LocalDateTime updatedAt){
         this.id = id;
         this.postId = postId;
         this.userId = userId;
         this.nickname = nickname;
+        this.profileImage =profileImage;
         this.content = content;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;

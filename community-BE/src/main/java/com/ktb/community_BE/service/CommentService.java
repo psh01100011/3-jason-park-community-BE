@@ -46,6 +46,7 @@ public class CommentService {
                 post.getId(),
                 user.getId(),
                 user.getNickname(),
+                user.getProfileImage(),
                 comment.getContent(),
                 comment.getCreatedAt(),
                 comment.getUpdatedAt()
@@ -68,6 +69,7 @@ public class CommentService {
                 comment.getPost().getId(),
                 comment.getUser().getId(),
                 comment.getUser().getNickname(),
+                comment.getUser().getProfileImage(),
                 comment.getContent(),
                 comment.getCreatedAt(),
                 comment.getUpdatedAt()
@@ -96,6 +98,7 @@ public class CommentService {
                         comment.getPost().getId(),
                         comment.getUser().getId(),
                         comment.getUser().getNickname(),
+                        comment.getUser().getProfileImage(),
                         comment.getContent(),
                         comment.getCreatedAt(),
                         comment.getUpdatedAt()
