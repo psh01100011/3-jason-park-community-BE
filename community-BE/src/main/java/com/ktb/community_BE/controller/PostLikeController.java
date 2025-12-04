@@ -16,6 +16,13 @@ public class PostLikeController {
     private final PostLikeService postLikeService;
     private final UserAuthService userAuthService;
 
+    // 좋아요 확인
+    @GetMapping
+    public ResponseEntity<Boolean> islikepost(@PathVariable Long postId,@RequestAttribute("userId") Long userId) {
+        boolean result = postLikeService.islikepost(postId, userId);
+        return ResponseEntity.ok(result);
+    }
+
     // 좋아요 추가
     @PostMapping
     public ResponseEntity<String> likePost(@PathVariable Long postId,@RequestAttribute("userId") Long userId) {

@@ -19,6 +19,15 @@ public class PostLikeService {
     private final PostLikeRepository postLikeRepository;
     private final EntityManager entityManager;
 
+    //좋아요 여부
+    public boolean islikepost(Long postId, Long userId){
+        if(postLikeRepository.existsByPostIdAndUserId(postId, userId)){
+            return true;
+        }
+        return false;
+    }
+
+
     //좋아요
     public void likePost(Long postId, Long userId) {
         if (postLikeRepository.existsByPostIdAndUserId(postId, userId)) {

@@ -6,6 +6,7 @@ import com.ktb.community_BE.entity.UserAuth;
 import com.ktb.community_BE.entity.UserStatus;
 import com.ktb.community_BE.repository.UserAuthRepository;
 import com.ktb.community_BE.repository.UserRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +30,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserAuthRepository userAuthRepository;
-
+    private final UserAuthService userAuthService;
     //이메일 중복 체크 : 중복 시 false
     public boolean checkEmail(String email){
         return !userAuthRepository.existsByEmail(email);
@@ -118,11 +119,12 @@ public class UserService {
     //유저 탈퇴 처리 : 유저가 작성한 게시물과 댓글은 관리자에게 넘김 -> 탈퇴한 사용자 익명처리용 -> 생각해보니까 이상함
     //바로 삭제 안하는 이유가 데이터를 보존하기 위함인데, 게시물 주인을 관리자로 돌리면 원작자를 찾기 힘들어짐 -> 구조 변경이 필요할 것 같음.
     @Transactional
-    public void withdrawUser(Long id){
+    public void withdrawUser(HttpServletResponse response, Long id){
         User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         user.changeStatus(UserStatus.DELETED);
         user.setDeletedAt(LocalDateTime.now());
+        userAuthService.logoutUser(response);
     }
 
     //실제 데이터베이스에서 삭제 구현 시 사용

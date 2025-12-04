@@ -6,6 +6,7 @@ import com.ktb.community_BE.entity.User;
 import com.ktb.community_BE.entity.UserStatus;
 import com.ktb.community_BE.service.UserAuthService;
 import com.ktb.community_BE.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -65,8 +66,8 @@ public class UserController {
 
     // 회원 탈퇴 : 내 정보의 상태만 변경 (활성화 -> 탈퇴)
     @PatchMapping("/me/status")
-    public ResponseEntity<Void> withdrawUser(@RequestAttribute("userId") Long userId){
-        userService.withdrawUser(userId);
+    public ResponseEntity<Void> withdrawUser(HttpServletResponse response, @RequestAttribute("userId") Long userId){
+        userService.withdrawUser(response, userId);
         return ResponseEntity.noContent().build();
     }
 
