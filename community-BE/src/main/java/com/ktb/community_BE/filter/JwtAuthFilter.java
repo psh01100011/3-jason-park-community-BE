@@ -25,7 +25,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtProvider jwtProvider;
     //필터 제외 경로 목록
     private static final String[] EXCLUDED_PATHS_AFTER_METHODS_GET = {
-            "/api/v1/posts/list"
+            "/api/v1/posts/list","/api/v1/policy"
     };
     private static final String[] EXCLUDED_PATHS_AFTER_METHODS_POST = {
             "/api/v1/auth", "/api/v1/users", "/api/v1/users/email", "/api/v1/users/nickname"
