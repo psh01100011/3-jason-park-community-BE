@@ -9,6 +9,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,7 @@ public class UserAuthService {
     private final JwtProvider jwtProvider;
     private final UserAuthRepository userAuthRepository;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     private static final int ACCESS_TOKEN_EXPIRATION = 60 * 60;
     private static final int REFRESH_TOKEN_EXPIRATION = 7* 24 * 3600;
@@ -36,7 +38,7 @@ public class UserAuthService {
     public Long login(String email, String password,HttpServletResponse response) {
         UserAuth user = userAuthRepository.findByEmail(email);
 
-        if(user == null){
+        if(user == null || !checkPassword(user, password)){
             return null;
         }
 
@@ -93,6 +95,11 @@ public class UserAuthService {
         return new TokenResponse(newAccessToken,refreshToken);
     }
 
+    private boolean checkPassword(UserAuth userAuth, String rawPassword){
+        return passwordEncoder.matches(rawPassword,userAuth.getPassword());
+    }
+
+
     // Access / Refresh 토큰을 새로 발급하고 DB에 저장
     private TokenResponse generateAndSaveTokens(UserAuth user){
         String accessToken = jwtProvider.createAccessToken(user.getId());
@@ -122,6 +129,7 @@ public class UserAuthService {
         cookie.setMaxAge(maxAge);
         response.addCookie(cookie);
     }
+
 
 
     public record TokenResponse(String accessToken, String refreshToken) { }

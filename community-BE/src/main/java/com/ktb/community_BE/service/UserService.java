@@ -8,6 +8,7 @@ import com.ktb.community_BE.repository.UserAuthRepository;
 import com.ktb.community_BE.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,7 +45,8 @@ public class UserService {
     @Transactional
     public UserDto createUser(UserDto userRequest){
         // password 해싱 일단 스킵
-        String passwordHash = userRequest.getPassword();
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String passwordHash = passwordEncoder.encode(userRequest.getPassword());
 
         // 유저 정보 저장 user + userAuth
         User user = userRepository.save(new User(
