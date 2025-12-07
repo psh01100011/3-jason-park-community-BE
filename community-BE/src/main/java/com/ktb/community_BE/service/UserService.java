@@ -90,8 +90,13 @@ public class UserService {
         //중복 닉네임 검증 작업이 필요할 것으로 보임
         if (userRequest.getNickname() != null) user.changeNickname(userRequest.getNickname());
 
+        if(userRequest.getProfileImage() == ""){
+            user.changeProfileImage(null);
+        }
+        else if (userRequest.getProfileImage() != null) {
+            user.changeProfileImage(userRequest.getProfileImage());
+        }
 
-        if (userRequest.getProfileImage() != null) user.changeProfileImage(userRequest.getProfileImage());
         user.setUpdatedAt(LocalDateTime.now());
 
         return new UserDto(
