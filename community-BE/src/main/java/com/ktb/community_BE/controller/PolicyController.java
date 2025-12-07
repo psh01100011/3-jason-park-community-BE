@@ -22,13 +22,13 @@ public class PolicyController {
     @GetMapping("/terms")
     public String termsPage(Model model) throws IOException {
         model.addAttribute("termsSections", policyService.getTermsSections());
-        return "/terms";
+        return "terms";
     }
 
     //개인정보
     @GetMapping("/privacy")
     public String privacyPage(Model model) throws Exception {
         model.addAttribute("privacySections", policyService.getPrivacySections());
-        return "/privacy";
+        return "privacy";
     }
 }
